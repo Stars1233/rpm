@@ -19,7 +19,7 @@ expansion of the macro which contains nested macros.
 The macro definition syntax is:
 
 ```
-	%define <name>[(opts)] <body>
+%define <name>[(opts)] <body>
 ```
 
 All whitespace surrounding `<body>` is removed.  Name may be composed
@@ -42,24 +42,24 @@ macro, otherwise all macros are global.
 While a parameterized macro is being expanded, the following shell-like
 automatic macros are available:
 
-| Macro  | Description
-| ------ | -----------
-| %0     | the name of the macro being invoked
-| %*	 | all arguments (unlike shell, not including any processed flags)
-| %**	 | all arguments (including any processed flags)
-| %#     | the number of arguments
-| %{-f}	 | if present at invocation, the last occurence of flag f (flag and argument)
-| %{-f*} |	if present at invocation, the argument to the last occurence of flag f
-| %1, %2, ...|	the arguments themselves (after getopt(3) processing)
+| Macro      | Description
+| ---------- | -----------
+| `%0`       | the name of the macro being invoked
+| `%*`       | all arguments (unlike shell, not including any processed flags)
+| `%**`      | all arguments (including any processed flags)
+| `%#`       | the number of arguments
+| `%{-f}`    | if present at invocation, the last occurence of flag f (flag and argument)
+| `%{-f*}`   | if present at invocation, the argument to the last occurence of flag f
+| `%1`, `%2`, ...| the arguments themselves (after getopt(3) processing)
 
 With rpm >= 4.17 and disabled option processing the mentioned macros are defined as:
 
-| Macro  | Description | Notes
-| ------ | ----------- | ------
-| %0     | the name of the macro being invoked
-| %*, %** | all arguments
-| %#     | the number of arguments
-| %1, %2, ...|	the arguments themselves
+| Macro       | Description 
+| ----------- | ----------- 
+| `%0`        | the name of the macro being invoked
+| `%*`, `%**` | all arguments
+| `%#`        | the number of arguments
+| `%1`, `%2`, ...| the arguments themselves
 
 At the end of invocation of a parameterized macro, the above macros are
 automatically discarded.
@@ -69,10 +69,10 @@ automatically discarded.
 A macro can be declared into the global scope as follows:
 
 ```
-	%global <name>[(opts)] <body>
+%global <name>[(opts)] <body>
 ```
 
-An important and useful feature of `%global` is that the body is expanded
+An important and useful feature of `%global` is that `<body>` is expanded
 at the time of definition, as opposed to time of use with regular macros.
 This is important inside parametric macros because otherwise the body could
 be referring to macros that are out of scope at the time of use, but also
@@ -99,76 +99,78 @@ various common operations.
 
 ### Macro manipulation
 
-| Macro            | Description | Introduced
-| ---------------- | ----------- | ----------
-| %define ...	   | define a macro
-| %undefine ...	   | undefine a macro
-| %global ...	   | define a macro whose body is available in global context
-| %{load:...}	   | load a macro file | 4.12.0
-| %{expand:...}	   | like eval, expand ... to <body> and (re-)expand <body>
-| %{expr:...}	   | evaluate an [expression](#expression-expansion) | 4.15.0
-| %{lua:...}	   | expand using the [embedded Lua interpreter](lua.md)
-| %{macrobody:...} | literal body of a macro | 4.16.0
-| %{quote:...}     | quote a parametric macro argument, needed to pass empty strings or strings with whitespace | 4.14.0
+| Macro               | Description | Introduced
+| ------------------- | ----------- | ----------
+| `%define ...`       | define a macro |
+| `%undefine ...`     | undefine a macro |
+| `%global ...`       | define a macro whose body is available in global context |
+| `%{load:...}`       | load a macro file | 4.12.0
+| `%{expand:...}`     | like eval, expand ... to \<body> and (re-)expand \<body> |
+| `%{expr:...}`       | evaluate an [expression](#expression-expansion) | 4.15.0
+| `%{lua:...}`        | expand using the [embedded Lua interpreter](lua.md) |
+| `%{macrobody:...}`  | literal body of a macro | 4.16.0
+| `%{quote:...}`      | quote a parametric macro argument, needed to pass empty strings or strings with whitespace | 4.14.0
 
 ### String operations
 
 | Macro            | Description | Introduced
 | ---------------- | ----------- | ----------
-| %{gsub:...}	   | replace occurences of pattern in a string (see Lua `string.gsub()`) | 4.19.0
-| %{len:...}	   | string length | 4.19.0
-| %{lower:...}	   | lowercase a string | 4.19.0
-| %{rep:...}	   | repeat a string (see Lua `string.rep()`) | 4.19.0
-| %{reverse:...}   | reverse a string | 4.19.0
-| %{sub:...}	   | expand to substring (see Lua `string.sub()`) | 4.19.0
-| %{upper:...}	   | uppercase a string | 4.19.0
-| %{shescape:...}  | 	single quote with escapes for use in shell | 4.18.0
-| %{shrink:...}	   | trim leading and trailing whitespace, reduce intermediate whitespace to a single space | 4.14.0
+| `%{gsub:...}`    | replace occurences of pattern in a string (see Lua `string.gsub()`) | 4.19.0
+| `%{len:...}`     | string length | 4.19.0
+| `%{lower:...}`   | lowercase a string | 4.19.0
+| `%{rep:...}`     | repeat a string (see Lua `string.rep()`) | 4.19.0
+| `%{reverse:...}` | reverse a string | 4.19.0
+| `%{sub:...}`     | expand to substring (see Lua `string.sub()`) | 4.19.0
+| `%{upper:...}`   | uppercase a string | 4.19.0
+| `%{shescape:...}`| single quote with escapes for use in shell | 4.18.0
+| `%{shrink:...}`  | trim leading and trailing whitespace, reduce intermediate whitespace to a single space | 4.14.0
 
 ### File and path operations
 
-| Macro             | Description | Introduced
-| ----------------- | ----------- | ----------
-| %{basename:...}   | basename(1) macro analogue
-| %{dirname:...}    | dirname(1) macro analogue | 4.11.0
-| %{exists:...}	    | test file existence, expands to 1/0 | 4.18.0
-| %{suffix:...}	    | expand to suffix part of a file name
-| %{url2path:...}   | convert url to a local path
-| %{uncompress:...} | expand to a command for outputting argument file to stdout, uncompressing as needed
+| Macro               | Description | Introduced
+| ------------------- | ----------- | ----------
+| `%{basename:...}`   | basename(1) macro analogue |
+| `%{dirname:...}`    | dirname(1) macro analogue | 4.11.0
+| `%{exists:...}`     | test file existence, expands to 1/0 | 4.18.0
+| `%{suffix:...}`     | expand to suffix part of a file name |
+| `%{url2path:...}`   | convert url to a local path |
+| `%{uncompress:...}` | expand to a command for outputting argument file to stdout, uncompressing as needed |
 
 ### Environment info
 
-| Macro            | Description | Introduced
-| ---------------- | ----------- | ----------
-| %getncpus	       | expand to the number of available CPUs | 4.15.0
-| %{getncpus:...}  | accepts arguments `total`, `proc` and `thread`, additionally accounting for available memory (eg address space limitations for threads| 4.19.0
-| %getconfdir	   | expand to rpm "home" directory (typically /usr/lib/rpm) | 4.7.0
-| %{getenv:...}	   | getenv(3) macro analogue | 4.7.0
-| %rpmversion      | expand to running rpm version
+| Macro              | Description | Introduced
+| ------------------ | ----------- | ----------
+| `%getncpus`        | expand to the number of available CPUs | 4.15.0
+| `%{getncpus:...}`  | accepts arguments `total`, `proc` and `thread`, additionally accounting for available memory (e.g. address space limitations for threads) | 4.19.0
+| `%getconfdir`      | expand to rpm "home" directory (typically /usr/lib/rpm) | 4.7.0
+| `%{getenv:...}`    | getenv(3) macro analogue | 4.7.0
+| `%rpmversion`      | expand to running rpm version |
 
 ### Output
 
 | Macro            | Description | Introduced
 | ---------------- | ----------- | ----------
-| %{echo:...}	   | print ... to stdout
-| %{warn:...}	   | print warning: ... to stderr
-| %{error:...}	   | print error: ... to stderr and return an error
-| %verbose	       | expand to 1 if rpm is in verbose mode, 0 if not
-| %{verbose:...}   | expand to ... if rpm is in verbose mode, the empty string if not | 4.17.1
+| `%{echo:...}`    | print ... to stdout |
+| `%{warn:...}`    | print warning: ... to stderr |
+| `%{error:...}`   | print error: ... to stderr and return an error |
+| `%verbose`       | expand to 1 if rpm is in verbose mode, 0 if not |
+| `%{verbose:...}` | expand to ... if rpm is in verbose mode, the empty string if not | 4.17.1
 
 ### Spec specific macros
 
 | Macro            | Description
 | ---------------- | -----------
-| %{S:...}	       | expand ... to <source> file name
-| %{P:...}	       | expand ... to <patch> file name
+| `%{S:...}`       | expand ... to \<source> file name
+| `%{P:...}`       | expand ... to \<patch> file name
 
 ### Diagnostics
 
-| Macro            | Description
-| ---------------- | -----------
-| %trace		   | toggle print of debugging information before/after expansion
-| %dump		       | print the active (i.e. non-covered) macro table
+| Macro            | Description | Introduced
+| ---------------- | ----------- | ----------
+| `%trace`         | toggle print of debugging information before/after expansion
+| `%dump`          | print the active (i.e. non-covered) macro table
+| `%__file_name`   | current file (if parsing a file) | 4.15
+| `%__file_lineno` | line number in current file (if parsing a file) | 4.15
 
 Macros may also be automatically included from /usr/lib/rpm/macros.
 In addition, rpm itself defines numerous macros. To display the current
@@ -223,51 +225,53 @@ In older versions, the behavior of conditionals on built-ins is undefined.
 Here is an example `%patch` definition from /usr/lib/rpm/macros:
 
 ```
-	%patch(b:p:P:REz:) \
-	%define patch_file	%{P:%{-P:%{-P*}}%{!-P:%%PATCH0}} \
-	%define patch_suffix	%{!-z:%{-b:--suffix %{-b*}}}%{!-b:%{-z:--suffix %{-z*}}}%{!-z:%{!-b: }}%{-z:%{-b:%{error:Can't specify both -z(%{-z*}) and -b(%{-b*})}}} \
-		%{uncompress:%patch_file} | patch %{-p:-p%{-p*}} %patch_suffix %{-R} %{-E} \
-	...
+%patch(b:p:P:REz:) \
+%define patch_file	%{P:%{-P:%{-P*}}%{!-P:%%PATCH0}} \
+%define patch_suffix	%{!-z:%{-b:--suffix %{-b*}}}%{!-b:%{-z:--suffix %{-z*}}}%{!-z:%{!-b: }}%{-z:%{-b:%{error:Can't specify both -z(%{-z*}) and -b(%{-b*})}}} \
+	%{uncompress:%patch_file} | patch %{-p:-p%{-p*}} %patch_suffix %{-R} %{-E} \
+...
 ```
 
 
 The first line defines %patch with its options. The body of %patch is
 
 ```
-	%{uncompress:%patch_file} | patch %{-p:-p%{-p*}} %patch_suffix %{-R} %{-E}
+%{uncompress:%patch_file} | patch %{-p:-p%{-p*}} %patch_suffix %{-R} %{-E}
 ```
 
 The body contains 7 macros, which expand as follows
 
-```
-	%{uncompress:...}	copy uncompressed patch to stdout
-	  %patch_file		... the name of the patch file
-	%{-p:...}		if "-p N" was present, (re-)generate "-pN" flag
-	  -p%{-p*}		... note patch-2.1 insists on contiguous "-pN"
-	%patch_suffix		override (default) ".orig" suffix if desired
-	%{-R}			supply -R (reversed) flag if desired
-	%{-E}			supply -E (delete empty?) flag if desired
-```
+| Macro              | Meaning
+| -----------------  | -------------------
+|`%{uncompress:...}` | copy uncompressed patch to stdout
+| → `%patch_file`    | ... the name of the patch file
+|`%{-p:...}`         | if "-p N" was present, (re-)generate "-pN" flag
+| → `-p%{-p*}`       | ... note patch-2.1 insists on contiguous "-pN"
+|`%patch_suffix`     | override (default) ".orig" suffix if desired
+|`%{-R}`             | supply "-R" (reversed) flag if desired
+|`%{-E}`             | supply "-E" (delete empty?) flag if desired
 
-There are two "private" helper macros:
 
-```
-	%patch_file	the gory details of generating the patch file name
-	%patch_suffix	the gory details of overriding the (default) ".orig"
-```
+There are two "private" helper macros, created with `%define`:
+
+| Macro           | Meaning
+| --------------- | ----------------
+| `%patch_file`   |the gory details of generating the patch file name
+| `%patch_suffix` |the gory details of overriding the (default) ".orig"
+
 
 ## Using a Macro
 
 To use a macro, write:
 
 ```
-	%<name> ...
+%<name> ...
 ```
 
 or
 
 ```
-	%{<name>}
+%{<name>}
 ```
 
 The `%{...}` form allows you to place the expansion adjacent to other text.
@@ -278,19 +282,19 @@ parameters are expanded properly.
 
 Example:
 ```
-	%define mymacro() (echo -n "My arg is %1" ; sleep %1 ; echo done.)
+%define mymacro() (echo -n "My arg is %1" ; sleep %1 ; echo done.)
 ```
 
 Usage:
 
 ```
-	%mymacro 5
+%mymacro 5
 ```
 
 This expands to:
 
 ```
-	(echo -n "My arg is 5" ; sleep 5 ; echo done.)
+(echo -n "My arg is 5" ; sleep 5 ; echo done.)
 ```
 
 This will cause all occurrences of `%1` in the macro definition to be
@@ -330,14 +334,14 @@ expression are expanded first and then the expression is
 evaluated (without re-expanding the terms).  Thus
 
 ```
-	rpm --define 'foo 1 + 2' --eval '%{expr:%foo}'
+rpm --define 'foo 1 + 2' --eval '%{expr:%foo}'
 ```
 
 will print "3".  Using `%[%foo]` instead will result in the
 error that "1 + 2" is not a number.
 
 Doing the macro expansion when evaluating the terms has two
-advantages.  First, it allows rpm to do correct short-circuit 
+advantages.  First, it allows rpm to do correct short-circuit
 processing when evaluation logical operators.  Second, the
 expansion result does not influence the expression parsing,
 e.g. `%["%file"]` will even work if the `%file` macro expands
@@ -355,7 +359,7 @@ Evaluating a macro can be difficult outside of an rpm execution context. If
 you wish to see the expanded value of a macro, you may use the option
 
 ```
-	--eval '<macro expression>'
+--eval '<macro expression>'
 ```
 
 that will read rpm config files and print the macro expansion on stdout.
@@ -395,19 +399,19 @@ expanded during macro file read.
 Several macro definitions provided by the default rpm macro set have uses in
 packaging similar to the autoconf variables that are used in building packages:
 
-| Macro            | Default value
-| ---------------- | -------------
-| %_prefix		   | /usr
-| %_exec_prefix	   | %{_prefix}
-| %_bindir		   | %{_exec_prefix}/bin
-| %_sbindir		   | %{_exec_prefix}/sbin
-| %_libexecdir	   | %{_exec_prefix}/libexec
-| %_datadir		   | %{_prefix}/share
-| %_sysconfdir	   | /etc
-| %_sharedstatedir | %{_prefix}/com
-| %_localstatedir  | %{_prefix}/var
-| %_libdir		   | %{_exec_prefix}/lib
-| %_includedir	   | %{_prefix}/include
-| %_oldincludedir  | /usr/include
-| %_infodir		   | %{_datadir}/info
-| %_mandir		   | %{_datadir}/man
+| Macro              | Default value
+| ------------------ | -------------
+| `%_prefix`         | /usr
+| `%_exec_prefix`    | %{_prefix}
+| `%_bindir`         | %{_exec_prefix}/bin
+| `%_sbindir`        | %{_exec_prefix}/sbin
+| `%_libexecdir`     | %{_exec_prefix}/libexec
+| `%_datadir`        | %{_prefix}/share
+| `%_sysconfdir`     | /etc
+| `%_sharedstatedir` | %{_prefix}/com
+| `%_localstatedir`  | %{_prefix}/var
+| `%_libdir`         | %{_exec_prefix}/lib
+| `%_includedir`     | %{_prefix}/include
+| `%_oldincludedir`  | /usr/include
+| `%_infodir`        | %{_datadir}/info
+| `%_mandir`         | %{_datadir}/man
